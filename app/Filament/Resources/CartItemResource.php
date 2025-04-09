@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CartItemResource\Pages;
-use App\Filament\Resources\CartItemResource\RelationManagers;
 use App\Models\CartItem;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CartItemResource extends Resource
 {
@@ -23,7 +20,27 @@ class CartItemResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Select::make('cart_id')
+                    ->label('Carrito')
+                    ->relationship('cart', 'id')
+                    ->required(),
+
+                Forms\Components\Select::make('product_id')
+                    ->label('Producto')
+                    ->relationship('product', 'name')
+                    ->required(),
+
+                Forms\Components\Select::make('variant_id')
+                    ->label('Variante')
+                    ->relationship('variant', 'id')
+                    ->nullable(),
+
+                Forms\Components\TextInput::make('quantity')
+                    ->label('Cantidad')
+                    ->numeric()
+                    ->minValue(1)
+                    ->default(1)
+                    ->required(),
             ]);
     }
 
@@ -31,7 +48,12 @@ class CartItemResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('id')->label('ID'),
+                Tables\Columns\TextColumn::make('cart.id')->label('Carrito'),
+                Tables\Columns\TextColumn::make('product.name')->label('Producto'),
+                Tables\Columns\TextColumn::make('variant.id')->label('Variante'),
+                Tables\Columns\TextColumn::make('quantity')->label('Cantidad'),
+                Tables\Columns\TextColumn::make('created_at')->label('Creado')->dateTime(),
             ])
             ->filters([
                 //
@@ -48,9 +70,7 @@ class CartItemResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
