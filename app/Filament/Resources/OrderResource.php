@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OrderResource extends Resource
 {
@@ -23,7 +20,47 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Select::make('user_id')
+                    ->label('Usuario')
+                    ->relationship('user', 'email')
+                    ->searchable()
+                    ->required(),
+
+                Forms\Components\Select::make('coupon_id')
+                    ->label('Cupón aplicado')
+                    ->relationship('coupon', 'code')
+                    ->searchable()
+                    ->nullable(),
+
+                Forms\Components\TextInput::make('total')
+                    ->label('Total')
+                    ->numeric()
+                    ->step(0.01)
+                    ->required(),
+
+                Forms\Components\Select::make('payment_method')
+                    ->label('Método de pago')
+                    ->options([
+                        'paypal' => 'PayPal',
+                        'stripe' => 'Stripe',
+                        'cash_on_delivery' => 'Contra reembolso',
+                    ])
+                    ->required(),
+
+                Forms\Components\Select::make('status')
+                    ->label('Estado del pedido')
+                    ->options([
+                        'pending' => 'Pendiente',
+                        'processing' => 'Procesando',
+                        'completed' => 'Completado',
+                        'cancelled' => 'Cancelado',
+                    ])
+                    ->required(),
+
+                Forms\Components\Textarea::make('shipping_address')
+                    ->label('Dirección de envío')
+                    ->rows(3)
+                    ->required(),
             ]);
     }
 
@@ -31,7 +68,13 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('id')->sortable(),
+                Tables\Columns\TextColumn::make('user.email')->label('Usuario')->searchable(),
+                Tables\Columns\TextColumn::make('coupon.code')->label('Cupón')->default('-'),
+                Tables\Columns\TextColumn::make('total')->money('EUR')->label('Total'),
+                Tables\Columns\TextColumn::make('payment_method')->label('Pago'),
+                Tables\Columns\TextColumn::make('status')->label('Estado'),
+                Tables\Columns\TextColumn::make('created_at')->label('Creado')->dateTime(),
             ])
             ->filters([
                 //
@@ -40,17 +83,14 @@ class OrderResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
+    // Puedes eliminar este método si no vas a usar relaciones dentro del panel
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

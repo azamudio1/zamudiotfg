@@ -3,27 +3,37 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductImageResource\Pages;
-use App\Filament\Resources\ProductImageResource\RelationManagers;
 use App\Models\ProductImage;
+use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Actions\EditAction;
 
 class ProductImageResource extends Resource
 {
     protected static ?string $model = ProductImage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-photo';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Select::make('product_id')
+                    ->label('Producto')
+                    ->relationship('product', 'name')
+                    ->searchable()
+                    ->required(),
+
+                Forms\Components\FileUpload::make('image_path')
+                    ->label('Imagen del producto')
+                    ->directory('product-images')
+                    ->image()
+                    ->imageEditor()
+                    ->required(),
             ]);
     }
 
@@ -31,26 +41,36 @@ class ProductImageResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\ImageColumn::make('image_path')
+                    ->label('Imagen')
+                    ->circular(),
+
+                Tables\Columns\TextColumn::make('product.name')
+                    ->label('Producto')
+                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
+                    ->dateTime(),
+
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Actualizado')
+                    ->dateTime(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
