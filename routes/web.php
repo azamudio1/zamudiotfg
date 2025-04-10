@@ -61,3 +61,13 @@ Route::get('/dashboard', [HomeController::class, 'index'])->middleware(['auth', 
 
 
 Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+
+
+
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
+
