@@ -2,45 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
-use App\Models\CartItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    // Almacenar artículo en el carrito
-    public function store(Request $request)
+    public function add(Request $request, Product $product)
     {
-        $cart = Cart::firstOrCreate(['user_id' => auth()->id()]);
+        // Aquí puedes usar sesión para guardar el carrito
+        $cart = session()->get('cart', []);
 
-        $cartItem = $cart->cartItems()->create([
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-        ]);
-
-        return response()->json($cartItem, 201);
-    }
-
-    // Obtener el carrito de un usuario
-    public function show($userId)
-    {
-        $cart = Cart::where('user_id', $userId)->first();
-
-        if (!$cart) {
-            return response()->json(['message' => 'No hay carrito'], 404);
+        if (isset($cart[$product->id])) {
+            $cart[$product->id]['quantity']++;
+        } else {
+            $cart[$product->id] = [
+                'name' => $product->name,
+                'quantity' => 1,
+                'price' => $product->price,
+                'image' => $product->images->first()?->url,
+            ];
         }
 
-        return response()->json($cart->cartItems);
-    }
+        session()->put('cart', $cart);
 
-    // Eliminar carritos abandonados (tarea programada)
-    public function cleanAbandonedCarts()
-    {
-        $cartExpirationTime = now()->subHours(24); // Carritos abandonados después de 24 horas
-
-        Cart::where('updated_at', '<', $cartExpirationTime)->delete();
-
-        return response()->json(['message' => 'Carritos abandonados limpiados'], 200);
+        return redirect()->back()->with('success', 'Producto añadido al carrito.');
     }
 }
 

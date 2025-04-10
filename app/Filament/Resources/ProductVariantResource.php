@@ -31,11 +31,6 @@ class ProductVariantResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                Forms\Components\TextInput::make('sku')
-                    ->label('SKU')
-                    ->required()
-                    ->maxLength(100),
-
                 Forms\Components\TextInput::make('price')
                     ->label('Precio')
                     ->numeric()
@@ -56,7 +51,6 @@ class ProductVariantResource extends Resource
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('product.name')->label('Producto')->searchable(),
                 Tables\Columns\TextColumn::make('variant_name')->label('Variante')->searchable(),
-                Tables\Columns\TextColumn::make('sku')->label('SKU'),
                 Tables\Columns\TextColumn::make('price')->label('Precio')->money('eur'),
                 Tables\Columns\TextColumn::make('stock')->label('Stock'),
                 Tables\Columns\TextColumn::make('created_at')->label('Creado')->dateTime(),
