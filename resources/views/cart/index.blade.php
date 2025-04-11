@@ -19,7 +19,7 @@
                             <div class="flex flex-col sm:flex-row items-center justify-between border-b pb-4 gap-4">
                                 <div class="flex items-center gap-4 w-full sm:w-auto">
                                     @if (!empty($details['image']))
-                                        <img src="{{ asset('storage/' . $details['image']) }}"
+                                        <img src="{{ $details['image'] }}"
                                              alt="{{ $details['name'] }}"
                                              class="w-24 h-24 object-cover rounded border">
                                     @else

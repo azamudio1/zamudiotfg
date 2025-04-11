@@ -14,28 +14,23 @@ class CartController extends Controller
     }
 
     public function add(Request $request, Product $product)
-    {
-        $cart = session()->get('cart', []);
+{
+    $cart = session()->get('cart', []);
 
-        $image = $product->images()->first();
-        $imageUrl = $image ? asset('storage/' . $image->image_path) : 'https://via.placeholder.com/150';
+    $image = $product->images()->first(); // Obtener la primera imagen del producto
+    $imageUrl = $image ? asset('storage/' . $image->image_path) : 'https://via.placeholder.com/150';
 
-        if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity']++;
-        } else {
-            $cart[$product->id] = [
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price,
-                'image' => $imageUrl,
-                'quantity' => 1,
-            ];
-        }
+    $cart[$product->id] = [
+        'name' => $product->name,
+        'price' => $product->price,
+        'quantity' => isset($cart[$product->id]) ? $cart[$product->id]['quantity'] + 1 : 1,
+        'image' => $imageUrl, // Guardar la URL de la imagen
+    ];
 
-        session()->put('cart', $cart);
+    session()->put('cart', $cart);
 
-        return redirect()->back()->with('success', 'Producto añadido al carrito.');
-    }
+    return redirect()->back()->with('success', 'Producto añadido al carrito.');
+}
 
     public function update(Request $request, $id)
     {
@@ -67,4 +62,5 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         return view('cart.checkout', compact('cart'));
     }
+    
 }
