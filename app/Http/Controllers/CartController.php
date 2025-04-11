@@ -17,6 +17,9 @@ class CartController extends Controller
     {
         $cart = session()->get('cart', []);
 
+        $image = $product->images()->first();
+        $imageUrl = $image ? asset('storage/' . $image->image_path) : 'https://via.placeholder.com/150';
+
         if (isset($cart[$product->id])) {
             $cart[$product->id]['quantity']++;
         } else {
@@ -24,7 +27,7 @@ class CartController extends Controller
                 'name' => $product->name,
                 'description' => $product->description,
                 'price' => $product->price,
-                'image' => $product->images()->first()->url ?? 'https://via.placeholder.com/150',
+                'image' => $imageUrl,
                 'quantity' => 1,
             ];
         }

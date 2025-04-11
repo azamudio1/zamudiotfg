@@ -16,7 +16,8 @@
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-2xl overflow-hidden transition">
                             <a href="{{ route('products.show', $product->id) }}">
                                 @if ($product->images->first())
-                                    <img src="{{ asset('storage/' . $product->images->first()->url) }}" class="w-full h-48 object-cover" alt="{{ $product->name }}">
+                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                                         class="w-full h-48 object-cover" loading="lazy" alt="{{ $product->name }}">
                                 @else
                                     <div class="w-full h-48 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500">
                                         Sin imagen
@@ -47,7 +48,8 @@
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-2xl overflow-hidden transition">
                             <a href="{{ route('products.show', $product->id) }}">
                                 @if ($product->images->first())
-                                    <img src="{{ asset('storage/' . $product->images->first()->url) }}" class="w-full h-48 object-cover" alt="{{ $product->name }}">
+                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                                         class="w-full h-48 object-cover" loading="lazy" alt="{{ $product->name }}">
                                 @else
                                     <div class="w-full h-48 flex items-center justify-center bg-gray-200 dark:bg-gray-700 text-gray-500">
                                         Sin imagen
