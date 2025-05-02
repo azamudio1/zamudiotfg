@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Coupon;
+use Illuminate\Support\Carbon;
+
 
 class CartController extends Controller
 {
@@ -62,5 +65,21 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         return view('cart.checkout', compact('cart'));
     }
+    public function applyCoupon(Request $request)
+{
+    $request->validate([
+        'coupon_code' => 'required|string',
+    ]);
+
+    $coupon = Coupon::where('code', $request->coupon_code)->first();
+
+
+    if (!$coupon) {
+        return redirect()->back()->withErrors(['coupon_code' => 'Cupón inválido o caducado.']);
+    }
+
+    session(['applied_coupon' => $coupon]);
+    return redirect()->back()->with('success', 'Cupón aplicado correctamente.');
+}
     
 }

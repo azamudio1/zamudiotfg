@@ -9,9 +9,24 @@
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">
 
+                {{-- Mensajes de sesión --}}
+                @if(session('success'))
+                    <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if($errors->any())
+                    <div class="bg-red-100 text-red-800 px-4 py-2 rounded mb-4">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
                 @if(session('cart') && count(session('cart')) > 0)
                     <div class="space-y-6">
-                        @php $total = 0; @endphp
+                        @php
+                            $total = 0;
+                            $discount = 0;
+                        @endphp
 
                         @foreach(session('cart') as $id => $details)
                             @php $total += $details['price'] * $details['quantity']; @endphp
@@ -57,11 +72,41 @@
                             </div>
                         @endforeach
 
-                        <div class="text-right mt-6">
-                            <p class="text-xl font-bold text-gray-800 dark:text-white">Total: {{ $total }}€</p>
-                        </div>
+                        {{-- Formulario de cupón --}}
+                        <form action="{{ route('cart.applyCoupon') }}" method="POST" class="mt-6 flex gap-4 items-center">
+                            @csrf
+                            <input type="text" name="coupon_code" placeholder="Código de cupón"
+                                   class="rounded px-4 py-2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                                   value="{{ old('coupon_code') }}">
+                            <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded">
+                                Aplicar cupón
+                            </button>
+                        </form>
 
-                        <div class="flex justify-end mt-4">
+                        {{-- Mostrar descuento si hay cupón --}}
+                        @if(session('applied_coupon'))
+                            @php
+                                $coupon = session('applied_coupon');
+                                if ($coupon->type === 'percentage') {
+                                    $discount = $total * ($coupon->discount / 100);
+                                } else {
+                                    $discount = $coupon->discount;
+                                }
+                                $discount = min($discount, $total); // evitar que el total sea negativo
+                            @endphp
+
+                            <div class="mt-6 text-right text-gray-800 dark:text-white">
+                                <p class="text-md">Cupón aplicado: <strong>{{ $coupon->code }}</strong></p>
+                                <p class="text-md">Descuento: <strong>-{{ number_format($discount, 2) }}€</strong></p>
+                                <p class="text-xl font-bold mt-2">Total con descuento: {{ number_format($total - $discount, 2) }}€</p>
+                            </div>
+                        @else
+                            <div class="text-right mt-6">
+                                <p class="text-xl font-bold text-gray-800 dark:text-white">Total: {{ number_format($total, 2) }}€</p>
+                            </div>
+                        @endif
+
+                        <div class="flex justify-end mt-6">
                             <a href="{{ route('checkout') }}"
                                class="px-6 py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-700">
                                 Ir al pago
