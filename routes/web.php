@@ -72,3 +72,11 @@ Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.
 Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout');
 
 Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/checkout', [CartController::class, 'processCheckout'])->name('checkout.process');
+
+use App\Http\Controllers\WalletController;
+
+Route::get('/wallet', [WalletController::class, 'show'])->name('wallet.show');
+Route::post('/wallet/add', [WalletController::class, 'add'])->name('wallet.add');
+
+Route::get('/orders', [OrderController::class, 'index'])->middleware('auth');

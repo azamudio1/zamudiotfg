@@ -8,6 +8,17 @@
     <div class="py-12 bg-gray-100 dark:bg-gray-900">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">
+                            @if (session('success'))
+                    <div class="mb-4 text-green-600 font-semibold">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="mb-4 text-red-600 font-semibold">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
                 {{-- Mensajes de sesión --}}
                 @if(session('success'))
@@ -20,6 +31,12 @@
                         {{ $errors->first() }}
                     </div>
                 @endif
+
+                @auth
+                    <div class="mb-4 text-right text-gray-700 dark:text-gray-300">
+                        Saldo en cartera: <strong>{{ Auth::user()->wallet_balance }}€</strong>
+                    </div>
+                @endauth
 
                 @if(session('cart') && count(session('cart')) > 0)
                     <div class="space-y-6">
@@ -107,10 +124,13 @@
                         @endif
 
                         <div class="flex justify-end mt-6">
-                            <a href="{{ route('checkout') }}"
-                               class="px-6 py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-700">
-                                Ir al pago
-                            </a>
+                        <form action="{{ route('checkout.process') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-700">
+                                Pagar con cartera virtual
+                            </button>
+                        </form>
+
                         </div>
                     </div>
                 @else

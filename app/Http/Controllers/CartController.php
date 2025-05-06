@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Coupon;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class CartController extends Controller
@@ -81,5 +83,53 @@ class CartController extends Controller
     session(['applied_coupon' => $coupon]);
     return redirect()->back()->with('success', 'Cupón aplicado correctamente.');
 }
+public function processCheckout(Request $request)
+{
+    $cart = session('cart', []);
+    if (empty($cart)) {
+        return redirect()->back()->with('error', 'Tu carrito está vacío.');
+    }
+
+    $total = 0;
+    foreach ($cart as $item) {
+        $total += $item['price'] * $item['quantity'];
+    }
+
+    // Aplicar cupón si está en sesión
+    $discount = 0;
+    $coupon = null;
+    if (session()->has('coupon')) {
+        $coupon = session('coupon');
+        if ($coupon['type'] === 'percentage') {
+            $discount = $total * ($coupon['discount'] / 100);
+        } elseif ($coupon['type'] === 'fixed') {
+            $discount = $coupon['discount'];
+        }
+    }
+
+    $totalAfterDiscount = max($total - $discount, 0);
+
+   /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    if ($user->wallet_balance < $totalAfterDiscount) {
+        return redirect()->back()->with('error', 'Saldo insuficiente en tu cartera virtual.');
+    }
+
+    // Descontar saldo y guardar
+    $user->wallet_balance -= $totalAfterDiscount;
+    $user->save();
+
+
+
+    // Aquí puedes guardar el pedido si lo necesitas
+
+    // Limpiar carrito y cupón
+    session()->forget('cart');
+    session()->forget('coupon');
+
+    return redirect()->route('cart.index')->with('success', 'Pago realizado con éxito. ¡Gracias por tu compra!');
+}
+
     
 }

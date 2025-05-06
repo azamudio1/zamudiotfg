@@ -41,6 +41,13 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn ($state) => filled($state) ? Hash::make($state) : null)
                     ->required(fn (string $context): bool => $context === 'create')
                     ->dehydrated(fn ($state) => filled($state)),
+                    
+                TextInput::make('wallet_balance')
+                    ->label('Saldo en cartera')
+                    ->numeric()
+                    ->prefix('€')
+                    ->default(0)
+                    ->required(),
             ]);
     }
 
