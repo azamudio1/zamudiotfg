@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\OrderController; 
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,7 +50,7 @@ Route::middleware('auth')->group(function () {
     // Agregar la ruta faltante
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
 });
-use App\Http\Controllers\OrderController; // Asegúrate de importar el controlador
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index'); // 🛒 Ruta añadida
@@ -80,3 +81,9 @@ Route::get('/wallet', [WalletController::class, 'show'])->name('wallet.show');
 Route::post('/wallet/add', [WalletController::class, 'add'])->name('wallet.add');
 
 Route::get('/orders', [OrderController::class, 'index'])->middleware('auth');
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
+});

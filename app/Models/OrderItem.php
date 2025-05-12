@@ -23,9 +23,9 @@ class OrderItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    // Relación con la variante
     public function variant()
     {
-        return $this->belongsTo(ProductVariant::class);
+        return $this->belongsTo(\App\Models\ProductVariant::class, 'variant_id');
     }
+
 }

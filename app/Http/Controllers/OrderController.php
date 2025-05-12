@@ -4,9 +4,28 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
+    // Mostrar todos los pedidos del usuario autenticado
+    public function userOrders()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            abort(403, 'No autorizado');
+        }
+
+        $orders = Order::with(['items.product', 'items.variant'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('orders.index', compact('orders'));
+    }
+
+    // Métodos API (opcionales o para administración)
     public function index()
     {
         return response()->json(Order::all());
@@ -26,7 +45,7 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        return response()->json(Order::find($id));
+        return response()->json(Order::with('items')->find($id));
     }
 
     public function update(Request $request, $id)
@@ -54,6 +73,4 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Pedido eliminado'], 200);
     }
-    
 }
-

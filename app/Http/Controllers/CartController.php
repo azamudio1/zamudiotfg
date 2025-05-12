@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Coupon;
-use Illuminate\Support\Carbon;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
-
-
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
@@ -19,23 +19,23 @@ class CartController extends Controller
     }
 
     public function add(Request $request, Product $product)
-{
-    $cart = session()->get('cart', []);
+    {
+        $cart = session()->get('cart', []);
 
-    $image = $product->images()->first(); // Obtener la primera imagen del producto
-    $imageUrl = $image ? asset('storage/' . $image->image_path) : 'https://via.placeholder.com/150';
+        $image = $product->images()->first();
+        $imageUrl = $image ? asset('storage/' . $image->image_path) : 'https://via.placeholder.com/150';
 
-    $cart[$product->id] = [
-        'name' => $product->name,
-        'price' => $product->price,
-        'quantity' => isset($cart[$product->id]) ? $cart[$product->id]['quantity'] + 1 : 1,
-        'image' => $imageUrl, // Guardar la URL de la imagen
-    ];
+        $cart[$product->id] = [
+            'name' => $product->name,
+            'price' => $product->price,
+            'quantity' => isset($cart[$product->id]) ? $cart[$product->id]['quantity'] + 1 : 1,
+            'image' => $imageUrl,
+        ];
 
-    session()->put('cart', $cart);
+        session()->put('cart', $cart);
 
-    return redirect()->back()->with('success', 'Producto añadido al carrito.');
-}
+        return redirect()->back()->with('success', 'Producto añadido al carrito.');
+    }
 
     public function update(Request $request, $id)
     {
@@ -65,24 +65,34 @@ class CartController extends Controller
     public function checkout()
     {
         $cart = session()->get('cart', []);
-        return view('cart.checkout', compact('cart'));
+        $coupon = session()->get('applied_coupon');
+        return view('cart.checkout', compact('cart', 'coupon'));
     }
+
     public function applyCoupon(Request $request)
-{
-    $request->validate([
-        'coupon_code' => 'required|string',
-    ]);
+    {
+        $request->validate([
+            'coupon_code' => 'required|string',
+        ]);
 
-    $coupon = Coupon::where('code', $request->coupon_code)->first();
+        $coupon = Coupon::where('code', $request->coupon_code)
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('valid_from')->orWhere('valid_from', '<=', now());
+            })
+            ->where(function ($query) {
+                $query->whereNull('valid_until')->orWhere('valid_until', '>=', now());
+            })
+            ->first();
 
+        if (!$coupon) {
+            return redirect()->back()->withErrors(['coupon_code' => 'Cupón inválido o caducado.']);
+        }
 
-    if (!$coupon) {
-        return redirect()->back()->withErrors(['coupon_code' => 'Cupón inválido o caducado.']);
+        session(['applied_coupon' => $coupon]);
+        return redirect()->back()->with('success', 'Cupón aplicado correctamente.');
     }
 
-    session(['applied_coupon' => $coupon]);
-    return redirect()->back()->with('success', 'Cupón aplicado correctamente.');
-}
 public function processCheckout(Request $request)
 {
     $cart = session('cart', []);
@@ -97,9 +107,9 @@ public function processCheckout(Request $request)
 
     // Aplicar cupón si está en sesión
     $discount = 0;
-    $coupon = null;
-    if (session()->has('coupon')) {
-        $coupon = session('coupon');
+    $coupon = session('applied_coupon');
+
+    if ($coupon) {
         if ($coupon['type'] === 'percentage') {
             $discount = $total * ($coupon['discount'] / 100);
         } elseif ($coupon['type'] === 'fixed') {
@@ -109,27 +119,47 @@ public function processCheckout(Request $request)
 
     $totalAfterDiscount = max($total - $discount, 0);
 
-   /** @var \App\Models\User $user */
+    /** @var \App\Models\User $user */
     $user = Auth::user();
 
     if ($user->wallet_balance < $totalAfterDiscount) {
         return redirect()->back()->with('error', 'Saldo insuficiente en tu cartera virtual.');
     }
 
-    // Descontar saldo y guardar
-    $user->wallet_balance -= $totalAfterDiscount;
-    $user->save();
+    DB::beginTransaction();
+    try {
+        // Crear pedido con un estado válido
+        $order = Order::create([
+            'user_id' => $user->id,
+            'status' => 'pending',  // Ajuste: Usamos 'pending' si el pedido no está pagado aún
+            'total' => $totalAfterDiscount,
+        ]);
 
+        // Añadir productos al pedido
+        foreach ($cart as $productId => $item) {
+            $order->items()->create([
+                'product_id' => $productId,
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
+            ]);
+        }
 
+        // Descontar saldo
+        $user->wallet_balance -= $totalAfterDiscount;
+        $user->save();
 
-    // Aquí puedes guardar el pedido si lo necesitas
+        // Limpiar sesión
+        session()->forget('cart');
+        session()->forget('applied_coupon');
 
-    // Limpiar carrito y cupón
-    session()->forget('cart');
-    session()->forget('coupon');
+        DB::commit();
 
-    return redirect()->route('cart.index')->with('success', 'Pago realizado con éxito. ¡Gracias por tu compra!');
+        return redirect()->route('orders.index')->with('success', 'Pago realizado con éxito. ¡Gracias por tu compra!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
+    }
 }
 
-    
+
 }
