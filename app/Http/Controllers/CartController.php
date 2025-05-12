@@ -107,7 +107,7 @@ public function processCheckout(Request $request)
 
     // Aplicar cupón si está en sesión
     $discount = 0;
-    $coupon = session('coupon');
+    $coupon = session('applied_coupon');
 
     if ($coupon) {
         if ($coupon['type'] === 'percentage') {
