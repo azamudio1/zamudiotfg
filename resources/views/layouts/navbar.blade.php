@@ -1,5 +1,4 @@
-{{-- NO necesita DOCTYPE ni html/head porque ya lo tienes en app.blade --}}
-<nav class="bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700">
+<nav class="bg-white/80 dark:bg-gray-900/90 backdrop-blur shadow-md border-b border-gray-200 dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <div class="flex items-center space-x-4">

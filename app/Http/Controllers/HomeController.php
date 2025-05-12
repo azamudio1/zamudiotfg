@@ -10,12 +10,18 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Obtener productos destacados, nuevos productos y últimas valoraciones
-        $featuredProducts = Product::inRandomOrder()->take(5)->get();  // Puedes cambiar la lógica para productos destacados
-        $newProducts = Product::latest()->take(5)->get();
-        $latestReviews = Review::latest()->take(5)->get();
+        // Productos destacados (puedes cambiar la lógica según algún flag o categoría en tu modelo)
+        $featuredProducts = Product::inRandomOrder()->take(5)->get();
 
-        // Pasar las variables a la vista 'dashboard'
-        return view('dashboard', compact('featuredProducts', 'newProducts', 'latestReviews'));
+        // Nuevos productos (opcional si decides mantener esta sección)
+        $newProducts = Product::latest()->take(5)->get();
+
+        // Últimas valoraciones
+        $latestReviews = Review::latest()->take(5)->with('user')->get();
+
+        // Todos los productos para el catálogo completo
+        $allProducts = Product::with('images')->get();
+
+        return view('dashboard', compact('featuredProducts', 'newProducts', 'latestReviews', 'allProducts'));
     }
 }
