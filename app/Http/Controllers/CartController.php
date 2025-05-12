@@ -76,22 +76,22 @@ class CartController extends Controller
         ]);
 
         $coupon = Coupon::where('code', $request->coupon_code)
-            ->where('is_active', true)
             ->where(function ($query) {
-                $query->whereNull('valid_from')->orWhere('valid_from', '<=', now());
-            })
-            ->where(function ($query) {
-                $query->whereNull('valid_until')->orWhere('valid_until', '>=', now());
+                $query->whereNull('expires_at')->orWhere('expires_at', '>=', now());
             })
             ->first();
 
         if (!$coupon) {
-            return redirect()->back()->withErrors(['coupon_code' => 'Cupón inválido o caducado.']);
+            return back()->with('error', 'Cupón no válido o expirado.');
         }
 
-        session(['applied_coupon' => $coupon]);
-        return redirect()->back()->with('success', 'Cupón aplicado correctamente.');
+        // Guardar correctamente con la clave esperada en la vista
+        session()->put('applied_coupon', $coupon);
+
+        return back()->with('success', 'Cupón aplicado correctamente.');
     }
+
+
 
 public function processCheckout(Request $request)
 {
@@ -107,7 +107,7 @@ public function processCheckout(Request $request)
 
     // Aplicar cupón si está en sesión
     $discount = 0;
-    $coupon = session('applied_coupon');
+    $coupon = session('coupon');
 
     if ($coupon) {
         if ($coupon['type'] === 'percentage') {
