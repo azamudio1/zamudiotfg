@@ -6,7 +6,6 @@
 
             <h2 class="text-5xl font-extrabold text-white mb-10">🛒 Tu Carrito de Compras</h2>
 
-            {{-- Mensajes de sesión --}}
             @if (session('success'))
                 <div class="bg-green-100 text-green-800 px-4 py-2 rounded mb-6 shadow">
                     {{ session('success') }}
@@ -73,7 +72,6 @@
                         </div>
                     @endforeach
 
-                    {{-- Cupón --}}
                     <form action="{{ route('cart.applyCoupon') }}" method="POST" class="flex gap-4 items-center mt-6">
                         @csrf
                         <input type="text" name="coupon_code" placeholder="Código de cupón"
@@ -83,7 +81,6 @@
                         </button>
                     </form>
 
-                    {{-- Descuento --}}
                     @if(session('applied_coupon'))
                         @php
                             $coupon = session('applied_coupon');
@@ -104,7 +101,6 @@
                         </div>
                     @endif
 
-                    {{-- Dirección de Envío y Pago --}}
                     <form action="{{ route('checkout.process') }}" method="POST" class="bg-gray-100 dark:bg-gray-700 rounded-2xl p-6 mt-10 space-y-4 shadow-xl">
                         @csrf
 

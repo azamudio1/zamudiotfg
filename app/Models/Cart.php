@@ -11,13 +11,11 @@ class Cart extends Model
 
     protected $fillable = ['user_id'];
 
-    // Relación con el usuario
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relación con los productos del carrito
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);

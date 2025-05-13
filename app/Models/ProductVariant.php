@@ -11,13 +11,11 @@ class ProductVariant extends Model
 
     protected $fillable = ['product_id', 'size', 'color', 'price'];
 
-    // Relación con el producto
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    // Relación con los detalles de pedidos
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);

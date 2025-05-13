@@ -87,7 +87,6 @@ class OrderResource extends Resource
             ]);
     }
 
-    // Puedes eliminar este método si no vas a usar relaciones dentro del panel
     public static function getRelations(): array
     {
         return [];

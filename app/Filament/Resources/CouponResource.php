@@ -29,14 +29,14 @@ class CouponResource extends Resource
                 Forms\Components\TextInput::make('code')
                     ->label('Código')
                     ->required()
-                    ->unique(ignoreRecord: true),  // Asegura que el código del cupón sea único
+                    ->unique(ignoreRecord: true),  
 
                 Forms\Components\TextInput::make('discount')
                     ->label('Descuento (%)')
                     ->numeric()
                     ->required()
                     ->minValue(0)
-                    ->maxValue(100),  // El descuento debe ser un valor entre 0 y 100
+                    ->maxValue(100),  
 
                 Forms\Components\DatePicker::make('valid_from')
                     ->label('Válido desde')
@@ -48,7 +48,7 @@ class CouponResource extends Resource
 
                 Forms\Components\Toggle::make('is_active')
                     ->label('Activo')
-                    ->default(true),  // Establece si el cupón está activo o no
+                    ->default(true),  
             ]);
     }
 
@@ -82,7 +82,6 @@ class CouponResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // Si tu modelo Coupon tiene relaciones con otros modelos, las puedes añadir aquí.
         ];
     }
 

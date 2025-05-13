@@ -66,8 +66,7 @@ class CartResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // Solo si creas CartItemsRelationManager
-            // CartItemsRelationManager::class,
+            
         ];
     }
 

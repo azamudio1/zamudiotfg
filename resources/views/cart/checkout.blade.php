@@ -46,7 +46,6 @@
                         @endforeach
                     </ul>
 
-                    {{-- Formulario de cupón --}}
                     <div class="mt-6">
                         <form action="{{ route('cart.applyCoupon') }}" method="POST" class="flex flex-col sm:flex-row items-center gap-4">
                             @csrf
@@ -68,13 +67,9 @@
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                     </div>
 
-                    <!-- Botón de pagar y demás contenido -->
                 </form>
 
-                    {{-- Resumen del carrito
-
-
-                    {{-- Descuento y total --}}
+                   
                     @php
                         $discount = 0;
                         if (session('applied_coupon')) {
@@ -99,7 +94,6 @@
                         @endif
                     </div>
 
-                    {{-- Botón de pago --}}
                     <form method="POST" action="#">
                         @csrf
                         <button type="submit" class="mt-6 px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition text-lg">

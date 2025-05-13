@@ -73,7 +73,6 @@ class OrderItemResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // Puedes agregar relaciones si quieres ver los OrderItems desde OrderResource
         ];
     }
 

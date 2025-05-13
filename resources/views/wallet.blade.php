@@ -4,13 +4,11 @@
     <div class="relative py-16">
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
-            {{-- Encabezado visual --}}
             <section class="bg-gradient-to-r from-green-600 via-emerald-500 to-teal-400 text-white rounded-3xl p-10 shadow-xl">
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-2">Tu Cartera</h1>
                 <p class="text-lg font-light">Gestiona tu saldo y realiza compras sin complicaciones.</p>
             </section>
 
-            {{-- Contenido --}}
             <section class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8">
                 @if (session('success'))
                     <div class="mb-4 px-4 py-3 bg-green-100 text-green-800 font-semibold rounded-lg border border-green-300">

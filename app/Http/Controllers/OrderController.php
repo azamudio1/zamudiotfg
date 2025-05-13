@@ -9,7 +9,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
-    // Mostrar todos los pedidos del usuario autenticado
     public function userOrders()
     {
         $user = Auth::user();
@@ -26,7 +25,6 @@ class OrderController extends Controller
         return view('orders.index', compact('orders'));
     }
 
-    // Métodos API (opcionales o para administración)
     public function index()
     {
         return response()->json(Order::all());

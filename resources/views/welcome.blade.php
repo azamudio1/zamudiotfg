@@ -29,7 +29,6 @@
         </div>
     </div>
 
-    <!-- Animaciones (opcional con Tailwind plugin o clases propias) -->
     <style>
         @keyframes fade-in-down {
             0% { opacity: 0; transform: translateY(-20px); }

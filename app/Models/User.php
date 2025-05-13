@@ -11,13 +11,11 @@ class User extends Authenticatable
 
     protected $fillable = ['name', 'email', 'password', 'role'];
 
-    // Relación con pedidos
     public function orders()
     {
         return $this->hasMany(Order::class);
     }
 
-    // Relación con carritos
     public function carts()
     {
         return $this->hasOne(Cart::class);

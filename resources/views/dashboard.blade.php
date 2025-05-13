@@ -4,7 +4,6 @@
     <div class="py-16">
         <div class="max-w-7xl mx-auto px-6 lg:px-8 space-y-24">
 
-            {{-- Hero o cabecera visual --}}
             <section class="relative bg-blue-600/90 dark:bg-blue-800/90 text-white rounded-3xl p-10 shadow-xl overflow-hidden">
                 <div class="max-w-4xl z-10 relative">
                     <h1 class="text-5xl font-extrabold mb-4">Bienvenido a la tienda</h1>
@@ -15,7 +14,6 @@
                 </div>
             </section>
 
-            {{-- Productos Destacados --}}
             @if ($featuredProducts->count())
                 <section>
                     <h2 class="text-4xl font-bold text-white mb-10">Productos Destacados</h2>
@@ -45,7 +43,6 @@
                 </section>
             @endif
 
-            {{-- Todos los Productos --}}
             <section>
                 <h2 class="text-4xl font-bold text-white mb-10">Todos los Productos</h2>
                 <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -73,7 +70,6 @@
                 </div>
             </section>
 
-            {{-- Últimas Valoraciones --}}
             @if ($latestReviews->count())
                 <section>
                     <h2 class="text-4xl font-bold text-white mb-10">Últimas Valoraciones</h2>
