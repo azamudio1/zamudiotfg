@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <div class="flex items-center space-x-4">
-                <a href="{{ url('/') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition">TiendaTop</a>
+                <a href="{{ url('/dashboard') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition">TiendaTop</a>
                 <div class="hidden md:flex space-x-4 text-sm font-medium">
                     <a href="{{ url('/cart') }}" class="text-gray-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">🛒 Carrito</a>
                     <a href="{{ url('/checkout') }}" class="text-gray-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">💳 Checkout</a>
@@ -25,10 +25,7 @@
                     <a href="{{ url('/register') }}" class="text-sm text-gray-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400">Registrarse</a>
                 @endauth
 
-                <div class="flex items-center space-x-3 text-sm">
-                    <a href="{{ url('lang/en') }}" class="text-gray-800 dark:text-white hover:opacity-75 flex items-center gap-1">🇬🇧 <span class="hidden sm:inline">EN</span></a>
-                    <a href="{{ url('lang/es') }}" class="text-gray-800 dark:text-white hover:opacity-75 flex items-center gap-1">🇪🇸 <span class="hidden sm:inline">ES</span></a>
-                </div>
+                
             </div>
         </div>
     </div>
