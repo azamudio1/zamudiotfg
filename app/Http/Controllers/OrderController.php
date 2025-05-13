@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderController extends Controller
 {
@@ -73,4 +74,13 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Pedido eliminado'], 200);
     }
+    
+
+    public function downloadInvoice(Order $order)
+    {
+
+        $pdf = Pdf::loadView('orders.invoice', ['order' => $order]);
+        return $pdf->download("Factura-Pedido-{$order->id}.pdf");
+    }
+
 }

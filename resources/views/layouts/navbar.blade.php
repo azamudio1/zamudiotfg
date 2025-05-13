@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <div class="flex items-center space-x-4">
-                <a href="{{ url('/dashboard') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition">TiendaTop</a>
+                <a href="{{ url('/dashboard') }}" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition">ZamudioShop</a>
                 <div class="hidden md:flex space-x-4 text-sm font-medium">
                     <a href="{{ url('/cart') }}" class="text-gray-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">🛒 Carrito</a>
                     <a href="{{ url('/checkout') }}" class="text-gray-800 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition">💳 Checkout</a>

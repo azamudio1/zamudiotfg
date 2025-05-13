@@ -87,3 +87,5 @@ Route::get('/orders', [OrderController::class, 'index'])->middleware('auth');
 Route::middleware(['auth'])->group(function () {
     Route::get('/orders', [OrderController::class, 'userOrders'])->name('orders.index');
 });
+
+Route::get('/orders/{order}/invoice', [App\Http\Controllers\OrderController::class, 'downloadInvoice'])->name('orders.invoice');

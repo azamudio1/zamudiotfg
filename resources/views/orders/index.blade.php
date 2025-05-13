@@ -18,6 +18,13 @@
 
                     <p class="text-lg font-semibold text-blue-600 dark:text-blue-400">Total pagado: {{ number_format($order->total, 2) }}€</p>
 
+                    <div>
+                        <a href="{{ route('orders.invoice', $order->id) }}"
+                           class="inline-block mt-1 px-4 py-2 text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition">
+                            📄 Descargar Factura PDF
+                        </a>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="min-w-full text-sm table-auto border-collapse">
                             <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase text-xs">
