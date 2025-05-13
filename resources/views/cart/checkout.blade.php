@@ -59,6 +59,21 @@
                         </form>
                     </div>
 
+                    <form action="{{ route('cart.processCheckout') }}" method="POST" class="space-y-4">
+                    @csrf
+
+                    <div>
+                        <label for="shipping_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dirección de envío</label>
+                        <input type="text" name="shipping_address" id="shipping_address" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    </div>
+
+                    <!-- Botón de pagar y demás contenido -->
+                </form>
+
+                    {{-- Resumen del carrito
+
+
                     {{-- Descuento y total --}}
                     @php
                         $discount = 0;

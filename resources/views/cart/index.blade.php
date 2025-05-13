@@ -104,14 +104,26 @@
                         </div>
                     @endif
 
-                    <div class="flex justify-end mt-10">
-                        <form action="{{ route('checkout.process') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white text-lg px-6 py-3 rounded-2xl shadow-xl">
+                    {{-- Dirección de Envío y Pago --}}
+                    <form action="{{ route('checkout.process') }}" method="POST" class="bg-gray-100 dark:bg-gray-700 rounded-2xl p-6 mt-10 space-y-4 shadow-xl">
+                        @csrf
+
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">📦 Dirección de Envío</h3>
+
+                        <div>
+                            <label for="shipping_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Dirección completa</label>
+                            <input type="text" name="shipping_address" id="shipping_address" required
+                                   class="mt-1 block w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm text-gray-800"
+                                   placeholder="Calle, número, piso, ciudad, código postal..." />
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit"
+                                    class="bg-green-600 hover:bg-green-700 text-white text-lg px-6 py-3 rounded-2xl shadow-xl">
                                 💳 Pagar con cartera virtual
                             </button>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             @else
                 <p class="text-white text-lg">Tu carrito está vacío.</p>

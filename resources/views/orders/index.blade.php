@@ -23,7 +23,7 @@
                             <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase text-xs">
                                 <tr>
                                     <th class="px-4 py-3 text-left">Producto</th>
-                                    <th class="px-4 py-3 text-left">Variante</th>
+                                    <th class="px-4 py-3 text-left">Dirección de Envío</th>
                                     <th class="px-4 py-3 text-right">Cantidad</th>
                                     <th class="px-4 py-3 text-right">Precio</th>
                                     <th class="px-4 py-3 text-right">Subtotal</th>
@@ -36,7 +36,7 @@
                                             {{ $item->product->name ?? 'Producto eliminado' }}
                                         </td>
                                         <td class="px-4 py-3 text-gray-600 dark:text-gray-300">
-                                            {{ $item->variant->name ?? 'N/A' }}
+                                            {{ $order->shipping_address ?? 'No especificada' }}
                                         </td>
                                         <td class="px-4 py-3 text-right text-gray-800 dark:text-white">
                                             {{ $item->quantity }}

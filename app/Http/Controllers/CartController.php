@@ -15,7 +15,25 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
-        return view('cart.index', compact('cart'));
+        $coupon = session()->get('applied_coupon');
+
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $subtotal += $item['price'] * $item['quantity'];
+        }
+
+        $discount = 0;
+        if ($coupon) {
+            if ($coupon['type'] === 'percentage') {
+                $discount = $subtotal * ($coupon['discount'] / 100);
+            } elseif ($coupon['type'] === 'fixed') {
+                $discount = $coupon['discount'];
+            }
+        }
+
+        $total = max($subtotal - $discount, 0);
+
+        return view('cart.index', compact('cart', 'subtotal', 'discount', 'total', 'coupon'));
     }
 
     public function add(Request $request, Product $product)
@@ -85,81 +103,77 @@ class CartController extends Controller
             return back()->with('error', 'Cupón no válido o expirado.');
         }
 
-        // Guardar correctamente con la clave esperada en la vista
         session()->put('applied_coupon', $coupon);
 
         return back()->with('success', 'Cupón aplicado correctamente.');
     }
 
 
-
-public function processCheckout(Request $request)
-{
-    $cart = session('cart', []);
-    if (empty($cart)) {
-        return redirect()->back()->with('error', 'Tu carrito está vacío.');
-    }
-
-    $total = 0;
-    foreach ($cart as $item) {
-        $total += $item['price'] * $item['quantity'];
-    }
-
-    // Aplicar cupón si está en sesión
-    $discount = 0;
-    $coupon = session('applied_coupon');
-
-    if ($coupon) {
-        if ($coupon['type'] === 'percentage') {
-            $discount = $total * ($coupon['discount'] / 100);
-        } elseif ($coupon['type'] === 'fixed') {
-            $discount = $coupon['discount'];
-        }
-    }
-
-    $totalAfterDiscount = max($total - $discount, 0);
-
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
-
-    if ($user->wallet_balance < $totalAfterDiscount) {
-        return redirect()->back()->with('error', 'Saldo insuficiente en tu cartera virtual.');
-    }
-
-    DB::beginTransaction();
-    try {
-        // Crear pedido con un estado válido
-        $order = Order::create([
-            'user_id' => $user->id,
-            'status' => 'pending',  // Ajuste: Usamos 'pending' si el pedido no está pagado aún
-            'total' => $totalAfterDiscount,
+    public function processCheckout(Request $request)
+    {
+        $request->validate([
+            'shipping_address' => 'required|string|max:255',
         ]);
 
-        // Añadir productos al pedido
-        foreach ($cart as $productId => $item) {
-            $order->items()->create([
-                'product_id' => $productId,
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-            ]);
+        $cart = session('cart', []);
+        if (empty($cart)) {
+            return redirect()->back()->with('error', 'Tu carrito está vacío.');
         }
 
-        // Descontar saldo
-        $user->wallet_balance -= $totalAfterDiscount;
-        $user->save();
+        $total = 0;
+        foreach ($cart as $item) {
+            $total += $item['price'] * $item['quantity'];
+        }
 
-        // Limpiar sesión
-        session()->forget('cart');
-        session()->forget('applied_coupon');
+        $discount = 0;
+        $coupon = session('applied_coupon');
 
-        DB::commit();
+        if ($coupon) {
+            if ($coupon['type'] === 'percentage') {
+                $discount = $total * ($coupon['discount'] / 100);
+            } elseif ($coupon['type'] === 'fixed') {
+                $discount = $coupon['discount'];
+            }
+        }
 
-        return redirect()->route('orders.index')->with('success', 'Pago realizado con éxito. ¡Gracias por tu compra!');
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return redirect()->back()->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
+        $totalAfterDiscount = max($total - $discount, 0);
+
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user->wallet_balance < $totalAfterDiscount) {
+            return redirect()->back()->with('error', 'Saldo insuficiente en tu cartera virtual.');
+        }
+
+        DB::beginTransaction();
+        try {
+            $order = Order::create([
+                'user_id' => $user->id,
+                'status' => 'pending',
+                'total' => $totalAfterDiscount,
+                'shipping_address' => $request->input('shipping_address'),
+            ]);
+
+            foreach ($cart as $productId => $item) {
+                $order->items()->create([
+                    'product_id' => $productId,
+                    'quantity' => $item['quantity'],
+                    'price' => $item['price'],
+                ]);
+            }
+
+            $user->wallet_balance -= $totalAfterDiscount;
+            $user->save();
+
+            session()->forget('cart');
+            session()->forget('applied_coupon');
+
+            DB::commit();
+
+            return redirect()->route('orders.index')->with('success', 'Pago realizado con éxito. ¡Gracias por tu compra!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
+        }
     }
-}
-
-
 }
