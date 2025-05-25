@@ -18,6 +18,10 @@ class ProductImageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-photo';
 
+        protected static ?string $modelLabel = 'Product Image';
+    protected static ?string $pluralModelLabel = 'Product Image';
+    protected static ?string $navigationLabel = 'Product Image';
+
     public static function form(Form $form): Form
     {
         return $form

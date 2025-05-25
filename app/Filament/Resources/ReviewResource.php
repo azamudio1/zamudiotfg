@@ -88,4 +88,9 @@ class ReviewResource extends Resource
             'edit' => Pages\EditReview::route('/{record}/edit'),
         ];
     }
+        public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
 }

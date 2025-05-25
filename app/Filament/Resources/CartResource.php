@@ -78,4 +78,9 @@ class CartResource extends Resource
             'edit' => Pages\EditCart::route('/{record}/edit'),
         ];
     }
+        public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
 }
