@@ -20,12 +20,10 @@
                     <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                         @foreach($featuredProducts as $product)
                             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-2xl transition transform hover:scale-[1.02]">
-                                <a href="{{ route('products.show', $product->id) }}">
-                                    @if ($product->images->first())
-                                        <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
-                                             class="w-full h-56 object-cover rounded-t-2xl" loading="lazy" alt="{{ $product->name }}">
-                                    @endif
-                                </a>
+                                @if ($product->images->first())
+                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                                         class="w-full h-56 object-cover rounded-t-2xl" loading="lazy" alt="{{ $product->name }}">
+                                @endif
                                 <div class="p-4">
                                     <h3 class="text-lg font-semibold text-gray-800 dark:text-white truncate">{{ $product->name }}</h3>
                                     <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">{{ Str::limit($product->description, 60) }}</p>
@@ -48,12 +46,10 @@
                 <div class="grid gap-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                     @foreach($allProducts as $product)
                         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow hover:shadow-2xl transition transform hover:scale-[1.02]">
-                            <a href="{{ route('products.show', $product->id) }}">
-                                @if ($product->images->first())
-                                    <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
-                                         class="w-full h-56 object-cover rounded-t-2xl" loading="lazy" alt="{{ $product->name }}">
-                                @endif
-                            </a>
+                            @if ($product->images->first())
+                                <img src="{{ asset('storage/' . $product->images->first()->image_path) }}"
+                                     class="w-full h-56 object-cover rounded-t-2xl" loading="lazy" alt="{{ $product->name }}">
+                            @endif
                             <div class="p-4">
                                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white truncate">{{ $product->name }}</h3>
                                 <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">{{ Str::limit($product->description, 60) }}</p>
@@ -69,31 +65,6 @@
                     @endforeach
                 </div>
             </section>
-
-            @if ($latestReviews->count())
-                <section>
-                    <h2 class="text-4xl font-bold text-white mb-10">Últimas Valoraciones</h2>
-                    <div class="space-y-6">
-                        @foreach($latestReviews as $review)
-                            <div class="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg">
-                                <div class="flex items-center justify-between">
-                                    <p class="font-bold text-gray-900 dark:text-white">{{ $review->user->name }}</p>
-                                    <div class="text-yellow-400 text-lg">
-                                        @for ($i = 0; $i < $review->rating; $i++)
-                                            ★
-                                        @endfor
-                                        @for ($i = $review->rating; $i < 5; $i++)
-                                            ☆
-                                        @endfor
-                                    </div>
-                                </div>
-                                <p class="text-gray-600 dark:text-gray-300 mt-2">{{ $review->comment }}</p>
-                            </div>
-                        @endforeach
-                    </div>
-                </section>
-            @endif
-
         </div>
     </div>
 @endsection
